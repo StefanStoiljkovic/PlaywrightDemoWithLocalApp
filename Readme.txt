@@ -47,5 +47,3 @@ All tests (UI and API) are executed automatically via GitHub Actions upon each p
 Backend and frontend servers are started in the CI environment prior to test execution.
 
 Playwright handles both UI interaction and API validation from a centralized test suite.
-
-Test results and any coverage data are uploaded as artifacts in the CI pipeline.

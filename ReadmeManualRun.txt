@@ -1,4 +1,6 @@
-How to start
+How to start manual on windows:
+
+
 backend folder -- >start prompt --> node server.js
 front end folder -->start promt -->  npm start
 test framework folder --> start promt
