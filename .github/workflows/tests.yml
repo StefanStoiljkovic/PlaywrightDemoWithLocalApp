@@ -55,15 +55,23 @@ jobs:
         working-directory: ./my-app-backend
 
       - name: Start frontend server (port 3000)
-        run: nohup npm run start > frontend.log 2>&1 &
+        run: BROWSER=none nohup npm run start > frontend.log 2>&1 &
         working-directory: ./my-app-frontend
+
+      - name: Check running node processes and open ports (for debugging)
+        run: |
+          echo "Node processes:"
+          ps aux | grep node || echo "No node processes"
+          echo "Open TCP ports:"
+          netstat -tuln || echo "netstat not available"
+          ss -tuln || echo "ss not available"
 
       - name: Wait for backend (port 4000)
         run: npx wait-on tcp:4000 --timeout 60000
         working-directory: ./MyAppPlaywrightFramework
 
       - name: Wait for frontend (port 3000)
-        run: npx wait-on tcp:3000 --timeout 60000
+        run: npx wait-on tcp:3000 --timeout 120000
         working-directory: ./MyAppPlaywrightFramework
 
       - name: Test access to frontend
