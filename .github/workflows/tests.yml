@@ -62,6 +62,10 @@ jobs:
         run: ps aux | grep node
         shell: bash
 
+      - name: Install test framework dependencies
+        run: npm install
+        working-directory: ./MyAppPlaywrightFramework
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: ./MyAppPlaywrightFramework
