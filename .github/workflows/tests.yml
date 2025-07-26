@@ -58,13 +58,8 @@ jobs:
         run: BROWSER=none npm start > frontend.log 2>&1 &
         working-directory: ./my-app-frontend
 
-      - name: Check running node processes and open ports (for debugging)
-        run: |
-          echo "Node processes:"
-          ps aux | grep node || echo "No node processes"
-          echo "Open TCP ports:"
-          netstat -tuln || echo "netstat not available"
-          ss -tuln || echo "ss not available"
+      - name: Print frontend log (after start)
+        run: cat ./my-app-frontend/frontend.log || echo "No frontend log"
 
       - name: Wait for backend (port 4000)
         run: npx wait-on tcp:4000 --timeout 60000
