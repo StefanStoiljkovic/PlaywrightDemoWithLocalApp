@@ -42,10 +42,6 @@ jobs:
         run: npm install
         working-directory: ./my-app-backend
 
-      - name: Install frontend dependencies
-        run: npm install
-        working-directory: ./my-app-frontend
-
       - name: Install test framework dependencies
         run: npm install
         working-directory: ./MyAppPlaywrightFramework
@@ -53,6 +49,14 @@ jobs:
       - name: Start backend server (port 4000)
         run: nohup node server.js > backend.log 2>&1 &
         working-directory: ./my-app-backend
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./my-app-frontend
+
+      - name: Fix react-scripts permissions
+        run: chmod +x ./node_modules/.bin/react-scripts
+        working-directory: ./my-app-frontend
 
       - name: Start frontend server (port 3000)
         run: BROWSER=none npm start > frontend.log 2>&1 &
