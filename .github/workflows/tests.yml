@@ -58,8 +58,12 @@ jobs:
         run: nohup npm run start > frontend.log 2>&1 &
         working-directory: ./my-app-frontend
 
-      - name: Wait for servers to be ready
-        run: npx wait-on tcp:3000 tcp:4000
+      - name: Wait for backend (port 4000)
+        run: npx wait-on tcp:4000 --timeout 60000
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Wait for frontend (port 3000)
+        run: npx wait-on tcp:3000 --timeout 60000
         working-directory: ./MyAppPlaywrightFramework
 
       - name: Test access to frontend
@@ -67,6 +71,14 @@ jobs:
 
       - name: Test access to backend
         run: curl -I http://localhost:4000 || echo "Backend not reachable"
+
+      - name: Print backend log if wait failed
+        if: failure()
+        run: cat ./my-app-backend/backend.log || echo "No backend log"
+
+      - name: Print frontend log if wait failed
+        if: failure()
+        run: cat ./my-app-frontend/frontend.log || echo "No frontend log"
 
       - name: Fix Playwright CLI permissions
         run: chmod +x ./node_modules/.bin/playwright
