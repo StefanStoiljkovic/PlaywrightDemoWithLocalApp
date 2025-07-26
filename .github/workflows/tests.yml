@@ -62,12 +62,16 @@ jobs:
         run: ps aux | grep node
         shell: bash
 
-      - name: Install test framework dependencies
-        run: npm install
+      - name: Fix Playwright CLI permissions
+        run: chmod +x ./node_modules/.bin/playwright
         working-directory: ./MyAppPlaywrightFramework
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Wait for frontend/backend TCP ports to be open
+        run: npx wait-on tcp:3000 tcp:4000
         working-directory: ./MyAppPlaywrightFramework
 
       - name: Run Playwright tests (UI)
@@ -81,11 +85,4 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: my-app-backend/coverage
-
-      - name: Clean up backend and frontend servers
-        run: |
-          echo "Stopping backend and frontend servers..."
-          pkill -f "node server.js" || true
-          pkill -f "npm run start" || true
+          name: coverage-repo
