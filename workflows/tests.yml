@@ -1,0 +1,87 @@
+name: CI - Playwright UI + API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache backend dependencies
+        uses: actions/cache@v3
+        with:
+          path: my-app-backend/node_modules
+          key: ${{ runner.os }}-node-my-app-backend-${{ hashFiles('my-app-backend/package-lock.json') }}
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v3
+        with:
+          path: my-app-frontend/node_modules
+          key: ${{ runner.os }}-node-my-app-frontend-${{ hashFiles('my-app-frontend/package-lock.json') }}
+
+      - name: Cache test framework dependencies
+        uses: actions/cache@v3
+        with:
+          path: MyAppPlaywrightFramework/node_modules
+          key: ${{ runner.os }}-node-MyAppPlaywrightFramework-${{ hashFiles('MyAppPlaywrightFramework/package-lock.json') }}
+
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: ./my-app-backend
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./my-app-frontend
+
+      - name: Install test framework dependencies
+        run: npm install
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Start backend
+        run: node server.js &
+        working-directory: ./my-app-backend
+
+      - name: Start frontend
+        run: npm run start &
+        working-directory: ./my-app-frontend
+
+      - name: Wait for frontend/backend to be ready
+        run: npx wait-on http://localhost:3000 http://localhost:4000
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Run Playwright tests (UI)
+        run: npx playwright test
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Run API tests + Coverage
+        run: npx nyc npm test
+        working-directory: ./my-app-backend
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: my-app-backend/coverage
+
+      - name: Clean up backend and frontend servers
+        run: |
+          echo "Stopping backend and frontend servers..."
+          pkill -f "node server.js" || true
+          pkill -f "npm run start" || true
