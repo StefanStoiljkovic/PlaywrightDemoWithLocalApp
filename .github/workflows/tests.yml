@@ -55,7 +55,7 @@ jobs:
         working-directory: ./my-app-backend
 
       - name: Start frontend server (port 3000)
-        run: BROWSER=none nohup npm run start > frontend.log 2>&1 &
+        run: BROWSER=none npm start > frontend.log 2>&1 &
         working-directory: ./my-app-frontend
 
       - name: Check running node processes and open ports (for debugging)
