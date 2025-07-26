@@ -70,10 +70,6 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: ./MyAppPlaywrightFramework
 
-      - name: Wait for frontend/backend TCP ports to be open
-        run: npx wait-on tcp:3000 tcp:4000
-        working-directory: ./MyAppPlaywrightFramework
-
       - name: Run Playwright tests (UI)
         run: npx playwright test
         working-directory: ./MyAppPlaywrightFramework
