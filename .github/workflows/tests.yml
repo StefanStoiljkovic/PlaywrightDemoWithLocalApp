@@ -50,17 +50,23 @@ jobs:
         run: npm install
         working-directory: ./MyAppPlaywrightFramework
 
-      - name: Start backend
-        run: node server.js &
+      - name: Start backend server (port 4000)
+        run: nohup node server.js > backend.log 2>&1 &
         working-directory: ./my-app-backend
 
-      - name: Start frontend
-        run: npm run start &
+      - name: Start frontend server (port 3000)
+        run: nohup npm run start > frontend.log 2>&1 &
         working-directory: ./my-app-frontend
 
-      - name: Check running processes
-        run: ps aux | grep node
-        shell: bash
+      - name: Wait for servers to be ready
+        run: npx wait-on tcp:3000 tcp:4000
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Test access to frontend
+        run: curl -I http://localhost:3000 || echo "Frontend not reachable"
+
+      - name: Test access to backend
+        run: curl -I http://localhost:4000 || echo "Backend not reachable"
 
       - name: Fix Playwright CLI permissions
         run: chmod +x ./node_modules/.bin/playwright
@@ -81,4 +87,10 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-repo
+          name: coverage-report
+          path: my-app-backend/coverage
+
+      - name: Clean up backend and frontend servers
+        run: |
+          echo "Stopping all node processes..."
+          pkill -f "node" || true
