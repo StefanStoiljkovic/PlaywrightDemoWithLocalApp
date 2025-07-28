@@ -2,7 +2,9 @@
   "name": "myappplaywrightframework",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+      "reinstall": "powershell -Command \"Remove-Item -Recurse -Force node_modules; Remove-Item -Force package-lock.json; npm install; npx playwright install\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

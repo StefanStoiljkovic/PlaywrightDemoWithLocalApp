@@ -24,19 +24,19 @@ test.describe("API Tests with Helpers", () => {
       username: authData.username,
       password: authData.password,
     });
-    expect(res.status()).toBe(200);
+    await helpers.handle_response_status(res, 200);
     const json = await res.json();
     expect(json.token).toBeDefined();
   });
 
   test("POST /login - invalid credentials", async ({ request }) => {
     const res = await helpers.getPostResponse(baseURL, endPoints.login, {
-      username: "wrong",
-      password: "wrong",
+      username: authData.user_name_wrong,
+      password: authData.password_wrong,
     });
-    expect(res.status()).toBe(401);
-    const json = await res.json();
-    expect(json.error).toBe("Invalid credentials");
+    await helpers.handle_response_status(res, 401);
+    const { error } = await res.json();
+    expect(error).toBe("Invalid credentials");
   });
 
   test("CRUD Items", async ({ request }) => {
@@ -55,8 +55,7 @@ test.describe("API Tests with Helpers", () => {
       headers
     );
 
-    await helpers.handle_wrong_status(createRes, 201);
-    expect(createRes.status()).toBe(201);
+    await helpers.handle_response_status(createRes, 201);
     const { id } = await createRes.json();
 
     // Get items
@@ -80,7 +79,7 @@ test.describe("API Tests with Helpers", () => {
       },
       headers
     );
-    await helpers.handle_wrong_status(updateRes, 200);
+    await helpers.handle_response_status(updateRes, 200);
     expect(updateRes.status()).toBe(200);
 
     // Delete item
@@ -90,7 +89,6 @@ test.describe("API Tests with Helpers", () => {
       id,
       headers
     );
-    await helpers.handle_wrong_status(deleteRes, 204);
-    expect(deleteRes.status()).toBe(204);
+    await helpers.handle_response_status(deleteRes, 204);
   });
 });
