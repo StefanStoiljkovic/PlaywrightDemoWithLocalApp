@@ -18,6 +18,7 @@
     "@playwright/test": "^1.54.1",
     "@types/node": "^24.1.0",
     "allure-playwright": "^3.3.2",
+    "allure-commandline": "^2.13.0",
     "wait-on": "^8.0.4"
   }
 }
