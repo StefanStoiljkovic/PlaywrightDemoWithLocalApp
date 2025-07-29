@@ -99,6 +99,22 @@ jobs:
         run: npx playwright test
         working-directory: ./MyAppPlaywrightFramework
 
+      - name: Generate Allure Report
+        run: npm run allure:generate
+        working-directory: ./MyAppPlaywrightFramework
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: MyAppPlaywrightFramework/allure-report
+
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: MyAppPlaywrightFramework/playwright-report
+
       - name: Clean up backend and frontend servers
         run: |
           echo "Stopping all node processes..."
