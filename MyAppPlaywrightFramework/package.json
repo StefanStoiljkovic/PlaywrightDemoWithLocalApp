@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-      "reinstall": "powershell -Command \"Remove-Item -Recurse -Force node_modules; Remove-Item -Force package-lock.json; npm install; npx playwright install\""
+    "reinstall": "powershell -Command \"Remove-Item -Recurse -Force node_modules; Remove-Item -Force package-lock.json; npm install; npx playwright install\"",
+    "test": "npx playwright test",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "show:ar": "npm run allure:generate && npm run allure:open"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +16,7 @@
   "devDependencies": {
     "@playwright/test": "^1.54.1",
     "@types/node": "^24.1.0",
+    "allure-playwright": "^3.3.2",
     "wait-on": "^8.0.4"
   }
 }
