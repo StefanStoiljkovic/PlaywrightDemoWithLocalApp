@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { UIHelpers } from "../UIHelperFunctions";
 
 export class MainPage {
   constructor(page) {
@@ -10,9 +11,13 @@ export class MainPage {
     this.buttonAdd = page.getByRole("button", { name: "Add" });
     this.buttonEdit = page.getByRole("button", { name: "Edit" });
     this.buttonSave = page.getByRole("button", { name: "Save" });
+
+    // Functions
+    this.helpers = new UIHelpers();
   }
 
   cleanLiElements = async () => {
+    await this.page.waitForTimeout(1000);
     const liCount = await this.page.locator("ul li").count();
 
     for (let i = 0; i < liCount; i++) {
@@ -43,5 +48,16 @@ export class MainPage {
 
   verifyNumberOfLiElements = async (intNumber) => {
     await expect(this.liElement).toHaveCount(intNumber);
+  };
+
+  addItems = async (arrayItemsName) => {
+    if (Array.isArray(arrayItemsName)) {
+      for (const itemName of arrayItemsName) {
+        await this.page.waitForTimeout(100);
+        await this.addItem(itemName);
+      }
+    } else {
+      console.error("Array expected");
+    }
   };
 }
